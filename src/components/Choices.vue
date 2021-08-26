@@ -3,7 +3,7 @@
         <button
             :class="bindingClass(answer)"
             class="choices"
-            v-for="{ alpha, answer } in getAnswers()"
+            v-for="{ alpha, answer } in getAnswers"
             :key="alpha"
             @click="pickAnswer(answer, alpha)"
         >
@@ -16,9 +16,9 @@
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { ChoicesType } from "../models/modelChoice";
-import { ALPHA_ANSWERS } from "../utils/const";
-import {bus} from "../utils/helpers";
+import { ChoicesType, CountryModel } from "../models/modelChoice";
+import { ALPHA_ANSWERS, MAX_ANSWERS, MAX_QUESTIONS } from "../utils/const";
+import {bus, getRandomQuestions, getRandomInt} from "../utils/helpers";
 
 @Component({
     props: {
@@ -34,8 +34,8 @@ import {bus} from "../utils/helpers";
     },
 })
 export default class Choices extends Vue {
-    countries!: any[];
-    question!: any;
+    countries!: CountryModel[];
+    question!: CountryModel;
     nextStep!: Function;
     currentAnswer: string | null = null;
     showResult: boolean = false;
@@ -52,10 +52,15 @@ export default class Choices extends Vue {
     isActive(answer: string) {
         return this.currentAnswer === answer;
     }
-    getAnswers(): ChoicesType[] {
-        const ans = this.countries.map((country) => country.name);
+    get getAnswers(): ChoicesType[] {
+        let randomQues = getRandomQuestions();
+        console.log(randomQues);
+        const ans = randomQues.map((country) => {
+            return country.name
+        });
+        let idxRandom: number = getRandomInt(MAX_ANSWERS);
+        ans[idxRandom] = this.question.name;
         return ALPHA_ANSWERS.map((alpha, idx) => {
-            console.log('asd222')
             return {
                 alpha,
                 answer: ans[idx],
@@ -73,9 +78,9 @@ export default class Choices extends Vue {
         this.currentAnswer = answer;
         setTimeout(() => {
             this.showResult = true;
-            this.nextStep(true);
+            this.nextStep(this.checkIsCorrect(answer));
             // this.$emit('nextStep', this.isCorrect(answer))
-        }, 1000);
+        }, 500);
     }
     checkIsCorrect(answer: string): boolean {
         return this.showResult && answer === this.question.name;

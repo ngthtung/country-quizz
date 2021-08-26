@@ -2,7 +2,7 @@
     <div class="container">
         <div class="content">
             <p class="title-quiz">COUNTRY QUIZZ</p>
-            <BoxAnswser :countries="getContries" @nextRound="nextRound"/>
+            <BoxAnswser :countries="getContries" @playAgain="playAgain"/>
         </div>
     </div>
 </template>
@@ -10,9 +10,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import BoxAnswser from "./components/BoxAnwser.vue";
-import { getRandomInt } from "./utils/helpers";
-import { MAX_QUESTIONS } from "./utils/const";
-import countries from "./resources/countries.json";
+import { CountryModel } from "./models/modelChoice";
+import { getRandomQuestions } from "./utils/helpers";
 
 @Component({
     components: {
@@ -20,29 +19,14 @@ import countries from "./resources/countries.json";
     },
 })
 export default class App extends Vue {
-    countries: any = null;
+    countries: CountryModel[] = getRandomQuestions();;
   
-    beforeMount() {
-        this.countries = this.getRandomQuestions();
-    }
-    getRandomQuestions() {
-        let numQuestions: number[] = [];
-        
-        while(numQuestions.length < MAX_QUESTIONS) {
-            console.log('asd')
-            let idxRandom: number = getRandomInt(250)
-            if (!numQuestions.includes(idxRandom)) {
-                numQuestions.push(idxRandom)
-            }
-        }
-      
-        return numQuestions.map((val) => countries[val]);
-    }
     get getContries() {
         return this.countries;
     }
-    nextRound() {
-        this.countries = this.getRandomQuestions();
+
+    playAgain() {
+        this.countries = getRandomQuestions();
     }
 }
 </script>

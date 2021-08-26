@@ -1,32 +1,45 @@
 <template>
-    <div class="box-model">
-        <img
-            class="adventure-img"
-            src="../assets/undraw_adventure_4hum 1.svg"
-        />
-        <!-- <img src='./assets/undraw_winners_ao2o 2.svg' /> -->
-        <p class="question">
-            {{ getQuestion }}
-        </p>
-        <Choices
-            :countries="countries"
-            :question="question"
-            :nextStep="nextStep"
-        />
-        <button
-            class="next-question-btn"
-            @click="nextQuestion"
-            v-if="showNextQuestion"
-        >
-            Next
-        </button>
+    <div class="box-model" :class="{
+        'center': mode === MODE.RESULT
+    }">
+        <template v-if="mode === MODE.PLAYING">
+            <img
+                class="adventure-img"
+                src="../assets/undraw_adventure_4hum 1.svg"
+            />
+            <!-- <img src='./assets/undraw_winners_ao2o 2.svg' /> -->
+            <p class="question">{{ getQuestion }}</p>
+            <Choices
+                :countries="countries"
+                :question="question"
+                :nextStep="nextStep"
+            />
+            <button
+                class="next-question-btn"
+                @click="nextQuestion"
+                v-if="showBtnNextQuestion"
+            >
+                Next
+            </button>
+        </template>
+        <template v-if="mode === MODE.RESULT">
+            <img src="../assets/undraw_winners_ao2o 2.svg" class="winner-img" />
+            <p class="result-tag">Results</p>
+            <p class="result-answers">
+                You got <span class="score">{{ score }}</span> correct answers
+            </p>
+            <button class="btn-try-again" @click="playAgain">
+                Try again
+            </button>
+        </template>
     </div>
 </template>
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Choices from "./Choices.vue";
-import { MAX_QUESTIONS } from "../utils/const";
-import { getRandomInt, bus } from "../utils/helpers";
+import { MAX_QUESTIONS, MODE } from "../utils/const";
+import { bus } from "../utils/helpers";
+import { CountryModel } from "@/models/modelChoice";
 
 @Component({
     components: {
@@ -39,29 +52,45 @@ import { getRandomInt, bus } from "../utils/helpers";
     },
 })
 export default class BoxAnswser extends Vue {
-    countries!: any;
-    showNextQuestion: boolean = false;
+    countries!: CountryModel[];
+    showBtnNextQuestion: boolean = false;
     score: number = 0;
-    question: any = {};
+    idxCurrentQuestion: number = 0;
+    question: CountryModel = this.countries[this.idxCurrentQuestion];
+    mode: string = MODE.PLAYING;
+    readonly MODE = MODE;
 
     get getQuestion(): string {
-        const indRandom: number = getRandomInt(MAX_QUESTIONS);
-        this.question = this.countries[indRandom];
-        return `${this.countries[indRandom].capital} is the capital of`;
+        this.question = this.countries[this.idxCurrentQuestion];
+        return `${
+            this.countries[this.idxCurrentQuestion].capital
+        } is the capital of`;
     }
     nextStep(isCorrect: boolean) {
         if (isCorrect) {
             this.score++;
         }
-        this.showNextQuestion = true;
+        this.showBtnNextQuestion = true;
     }
     nextQuestion() {
-        this.showNextQuestion = false;
-        this.$emit("nextRound");
+        this.showBtnNextQuestion = false;
+        if (this.idxCurrentQuestion + 1 === MAX_QUESTIONS) {
+            this.mode = MODE.RESULT;
+            return;
+        } else {
+            this.idxCurrentQuestion++;
+        }
+
         this.resetChoices();
     }
+    playAgain() {
+        this.$emit("playAgain");
+        this.idxCurrentQuestion = 0;
+        this.score = 0;
+        this.mode = MODE.PLAYING;
+    }
     resetChoices() {
-        bus.$emit('resetChoices')
+        bus.$emit("resetChoices");
     }
 }
 </script>
@@ -73,6 +102,9 @@ export default class BoxAnswser extends Vue {
     border-radius: 24px;
     display: flex;
     flex-direction: column;
+    &.center {
+        align-items: center;
+    }
     .question {
         padding-left: 32px;
         font-size: 24px;
@@ -83,6 +115,39 @@ export default class BoxAnswser extends Vue {
         margin-left: auto;
         margin-top: -80px;
         width: 160px;
+    }
+    .winner-img {
+        margin-top: 50px;
+    }
+    .result-tag {
+        font-size: 48px;
+        line-height: 72px;
+        color: #1d355d;
+        font-weight: bold;
+        margin-bottom: 0px;
+    }
+    .result-answers {
+        font-size: 18px;
+        line-height: 27px;
+        color: #1d355d;
+        .score {
+            color: #6fcf97;
+            font-size: 30px;
+            font-weight: bold;
+        }
+    }
+    .btn-try-again {
+        margin-top: 71px;
+        margin-bottom: 33px;
+        background-color: white;
+        border: 2px solid #1d355d;
+        box-sizing: border-box;
+        border-radius: 12px;
+        width: 209px;
+        height: 62px;
+        &:hover {
+            cursor: pointer;
+        }
     }
     .next-question-btn {
         background-color: #f9a826;
