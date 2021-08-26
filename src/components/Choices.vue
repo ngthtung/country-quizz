@@ -54,7 +54,6 @@ export default class Choices extends Vue {
     }
     get getAnswers(): ChoicesType[] {
         let randomQues = getRandomQuestions();
-        console.log(randomQues);
         const ans = randomQues.map((country) => {
             return country.name
         });
