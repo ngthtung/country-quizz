@@ -117,8 +117,8 @@ export default class Choices extends Vue {
         background-color: white;
         border-radius: 10px;
         border: 2px solid rgba(96, 102, 208, 0.7);
-        height: 56px;
-        margin: 0px 32px 25px;
+        flex-basis: 56px;
+        margin: 0 32px 25px;
         color: rgba(96, 102, 208, 0.8);
 
         &:hover {

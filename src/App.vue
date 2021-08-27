@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="content">
-            <p class="title-quiz">COUNTRY QUIZZ</p>
+            <div class="title-quiz">COUNTRY QUIZZ</div>
             <BoxAnswser :countries="getContries" @playAgain="playAgain"/>
         </div>
     </div>
@@ -20,7 +20,7 @@ import { getRandomQuestions } from "./utils/helpers";
 })
 export default class App extends Vue {
     countries: CountryModel[] = getRandomQuestions();;
-  
+
     get getContries() {
         return this.countries;
     }
@@ -32,27 +32,35 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
-body {
-    width: 100%;
+* {
+    box-sizing: border-box;
+}
+html, body {
     height: 100%;
-    background-size: cover;
-    background-image: url("./assets/background.png");
-    font-family: Poppins;
+}
+body {
+    font-family: Poppins,serif;
     font-style: normal;
+    margin: 0;
 }
 button {
-    font-family: Poppins;
+    font-family: Poppins,serif;
     font-style: normal;
     font-weight: bold;
-    font-weight: 500;
     font-size: 18px;
     line-height: 27px;
 }
 .container {
     display: flex;
+    align-items: center;
     justify-content: center;
+    height: 100%;
+    background-image: url("./assets/background.png");
+    background-size: cover;
     .content {
         margin: 0 auto;
+        max-width: 5%;
+        min-width: 25%;
     }
     .title-quiz {
         font-weight: bold;

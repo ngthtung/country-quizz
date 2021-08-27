@@ -97,7 +97,6 @@ export default class BoxAnswser extends Vue {
 
 <style lang="scss" scoped>
 .box-model {
-    width: 464px;
     background-color: white;
     border-radius: 24px;
     display: flex;
@@ -106,7 +105,7 @@ export default class BoxAnswser extends Vue {
         align-items: center;
     }
     .question {
-        padding-left: 32px;
+        margin-left: 30px;
         font-size: 24px;
         color: #2f527b;
         font-weight: bold;
@@ -114,7 +113,9 @@ export default class BoxAnswser extends Vue {
     .adventure-img {
         margin-left: auto;
         margin-top: -80px;
-        width: 160px;
+        @media only screen and (max-width: 1200px) {
+            display: none;
+        }
     }
     .winner-img {
         margin-top: 50px;
