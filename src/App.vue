@@ -59,7 +59,7 @@ button {
     background-size: cover;
     .content {
         margin: 0 auto;
-        max-width: 5%;
+        max-width: 100%;
         min-width: 25%;
     }
     .title-quiz {
